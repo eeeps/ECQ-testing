@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Containter/element query performance comparison</title>
+<script src="cq-prollyfill.js" async></script>
+<script src="EQCSS.min.js" async></script>
+<style>
+
+:root { 
+	--nope: rgba( 255,   0, 0, 1 );
+	--yep:  rgba( 0,   255, 0, 1 );
+	font-family: menlo, monospace;
+}
+
+body, html {
+	margin: 0;
+	padding: 0;
+}
+
+h2, p {
+	margin: 1em;
+	text-align: center;
+}
+
+.box {
+	height: 5vh;
+	width: 90%;
+	background-color: var(--nope);
+	border-right: 1px solid white;
+}
+
+
+/* Media queries */
+
+@media (min-width: 555.555px) { /* 500 ÷ 90% */
+	.mediaQueries > .box {
+		background-color: var(--yep);
+	}
+}
+
+@media (min-width: 617.284px) { /* 500 ÷ 90% ÷ 90% */
+	.mediaQueries > .box > .box {
+		background-color: var(--yep);
+	}
+}
+
+@media (min-width: 685.871px) { /* ...etc % */
+	.mediaQueries > .box > .box > .box {
+		background-color: var(--yep);
+	}
+}
+
+@media (min-width: 762.079px) {
+	.mediaQueries > .box > .box > .box > .box {
+		background-color: var(--yep);
+	}
+}
+
+@media (min-width: 846.754px) {
+	.mediaQueries > .box > .box > .box > .box > .box {
+		background-color: var(--yep);
+	}
+}
+
+@media (min-width: 940.838px) {
+	.mediaQueries > .box > .box > .box > .box > .box > .box {
+		background-color: var(--yep);
+	}
+}
+
+@media (min-width: 1045.376px) {
+	.mediaQueries > .box > .box > .box > .box > .box > .box > .box {
+		background-color: var(--yep);
+	}
+}
+
+@media (min-width: 1161.529px) {
+	.mediaQueries > .box > .box > .box > .box > .box > .box > .box > .box {
+		background-color: var(--yep);
+	}
+}
+
+@media (min-width: 1290.587px) {
+	.mediaQueries > .box > .box > .box > .box > .box > .box > .box > .box > .box {
+		background-color: var(--yep);
+	}
+}
+
+@media (min-width: 1433.986px) {
+	.mediaQueries > .box > .box > .box > .box > .box > .box > .box > .box > .box > .box {
+		background-color: var(--yep);
+	}
+}
+
+
+/* Resize Observer */
+
+.box.big {
+	background-color: var(--yep);
+}
+
+
+/* cq-prollyfill */
+
+.cq-prollyfill .box:container( "width > 500px" ) {
+	background-color: var(--yep);
+}
+
+
+/* EQCSS */
+
+@element '.eqcss .box' and (min-width: 500px) {
+  $this {
+	background-color: var(--yep);
+  }
+}
+
+
+</style>
+</head>
+<body>
+
+<section class="mediaQueries">
+	<h2>Media queried:</h2>
+<div class="box">
+	<div class="box">
+		<div class="box">
+			<div class="box">
+				<div class="box">
+					<div class="box">
+						<div class="box">
+							<div class="box">
+								<div class="box">
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+</section>
+
+<section class="resizeObserver">
+	<h2><a href="https://wicg.github.io/ResizeObserver/">Resize Observer</a>ed:</h2>
+	<p>This’ll only work in Chrome with <a href="chrome://flags/#enable-experimental-web-platform-features">Experimental Web Platform Features enabled</a></p>
+<div class="box">
+	<div class="box">
+		<div class="box">
+			<div class="box">
+				<div class="box">
+					<div class="box">
+						<div class="box">
+							<div class="box">
+								<div class="box">
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+</section>
+
+<section class="cq-prollyfill">
+	<h2><a href="https://github.com/ausi/cq-prolyfill">cq-prollyfill</a>’d:</h2>
+<div class="box">
+	<div class="box">
+		<div class="box">
+			<div class="box">
+				<div class="box">
+					<div class="box">
+						<div class="box">
+							<div class="box">
+								<div class="box">
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+</section>
+
+<section class="eqcss">
+	<h2><a href="https://github.com/eqcss/eqcss">EQCSS</a>’d:</h2>
+<div class="box">
+	<div class="box">
+		<div class="box">
+			<div class="box">
+				<div class="box">
+					<div class="box">
+						<div class="box">
+							<div class="box">
+								<div class="box">
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+</section>
+
+
+<script>
+
+let r = new ResizeObserver( entries => {
+
+	for ( let entry of entries ) {
+
+		// console.log( entry.target, ' resized to ', entry.contentRect.width, 'px' );
+		if ( entry.contentRect.width > 500 ) {
+			entry.target.classList.add( 'big' );
+		} else {
+			entry.target.classList.remove( 'big' );
+		}
+
+	}
+	
+} );
+
+for ( let box of document.querySelectorAll( '.resizeObserver .box' ) ) {
+
+	r.observe( box );
+
+}
+
+</script>
+
+</body>
+</html>
